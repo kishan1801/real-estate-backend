@@ -2,7 +2,7 @@ const User = require('../models/Users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-//api/resigter. Endpoint
+//api/users/resigter. Endpoint
 exports.registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -50,3 +50,5 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+
