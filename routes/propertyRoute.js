@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
-const authMiddleware = require('../middleware/authMiddleware'); 
+const authMiddleware = require('../middleware/authMiddleware'); // direct middleware
 
 const {
   createProperty,
@@ -13,7 +13,7 @@ const {
   deleteProperty,
 } = require('../controllers/propertyController');
 
-
+// Multer config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '..', 'uploads'));
@@ -33,14 +33,17 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } 
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
+// Public read endpoints
 router.get('/', getAllProperties);
 router.get('/:id', getPropertyById);
 
-router.post('/', upload.array('photos', 10), createProperty);
-router.put('/:id',  upload.array('photos', 10), updateProperty);
-router.delete('/:id', deleteProperty);
+// Protected create/update/delete
+// Order: authMiddleware runs first, then multer processes files, then controller runs
+router.post('/', authMiddleware, upload.array('photos', 10), createProperty);
+router.put('/:id', authMiddleware, upload.array('photos', 10), updateProperty);
+router.delete('/:id', authMiddleware, deleteProperty);
 
 module.exports = router;
