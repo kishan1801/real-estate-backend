@@ -39,8 +39,8 @@ const upload = multer({
 router.get('/', getAllProperties);
 router.get('/:id', getPropertyById);
 
-router.post('/', authMiddleware, upload.array('photos', 10), createProperty);
-router.put('/:id', authMiddleware, upload.array('photos', 10), updateProperty);
-router.delete('/:id', authMiddleware, deleteProperty);
+router.post('/', upload.array('photos', 10), createProperty);
+router.put('/:id',  upload.array('photos', 10), updateProperty);
+router.delete('/:id', deleteProperty);
 
 module.exports = router;
