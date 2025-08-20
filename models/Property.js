@@ -34,7 +34,8 @@ const propertySchema = new mongoose.Schema({
   featuredPackage: { type: String },
   ppdPackage:      { type: String },
   photos:          { type: [String] },  
-
+  
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
   // Step 4: Location Info
   email:    { type: String },
   city:     { type: String },
