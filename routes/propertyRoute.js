@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
-const authMiddleware = require('../middleware/authMiddleware')(); 
+const authMiddleware = require('../middleware/authMiddleware'); 
+
 const {
   createProperty,
   getAllProperties,
@@ -12,6 +13,7 @@ const {
   deleteProperty,
 } = require('../controllers/propertyController');
 
+// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '..', 'uploads'));
@@ -22,10 +24,15 @@ const storage = multer.diskStorage({
   }
 });
 
+// File filter
 const fileFilter = (req, file, cb) => {
   const allowed = /jpeg|jpg|png|webp/;
   const ext = path.extname(file.originalname).toLowerCase();
-  cb(null, allowed.test(ext));
+  if (allowed.test(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed (jpeg, jpg, png, webp)'), false);
+  }
 };
 
 const upload = multer({
@@ -34,11 +41,11 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-// Public reads
+// Public routes
 router.get('/', getAllProperties);
 router.get('/:id', getPropertyById);
 
-// Protected mutating routes
+// Protected routes
 router.post('/', authMiddleware, upload.array('photos', 10), createProperty);
 router.put('/:id', authMiddleware, upload.array('photos', 10), updateProperty);
 router.delete('/:id', authMiddleware, deleteProperty);
